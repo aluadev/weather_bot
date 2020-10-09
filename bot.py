@@ -66,7 +66,7 @@ def weather_date_handler(message):
         req_day = current_day + 3
     elif req_date == 'check for another city (type: /start)':
         states[message.from_user.id] = MAIN_STATE
-    if req_date != 'check for another city (type: /start)':
+    if (req_date != 'check for another city (type: /start)') & (req_date in buttons):
         for i in range(4):
             if (req_day - current_day) == i:
                 n_day = i
