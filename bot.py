@@ -10,6 +10,7 @@ bot = telebot.TeleBot(token)
 api_url = 'https://stepik.akentev.com/api/weather'
 states = {}
 cities = {}
+req_day = None
 buttons = ['TODAY', 'TOMORROW', 'DAY AFTER TOMORROW', '2 DAYS AFTER TOMORROW', 'check for another city (type: /start)']
 MAIN_STATE = 'main'
 NEXT_STATE = 'next_state'
