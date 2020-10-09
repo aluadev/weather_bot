@@ -1,15 +1,16 @@
 import telebot
 from telebot.types import ReplyKeyboardMarkup
+import os
+
 import requests
 from datetime import date
 
-#token = '968254774:AAGtxRgK9AWZldMPFXOfGbEmRfGhPYyiJiI'
-token = '1317198475:AAHqm43exCftREeFWt5HVyXLirwGECZ3PRc'
+token = os.environ["TELEGRAM_TOKEN"]
 bot = telebot.TeleBot(token)
 api_url = 'https://stepik.akentev.com/api/weather'
 states = {}
-city = None
-buttons = ['today', 'tomorrow', 'day after tomorrow', '2 days after tomorrow', 'check for another city']
+cities = {}
+buttons = ['TODAY', 'TOMORROW', 'DAY AFTER TOMORROW', '2 DAYS AFTER TOMORROW', 'check for another city (type: /start)']
 MAIN_STATE = 'main'
 NEXT_STATE = 'next_state'
 DATE_STATE = 'weather_date'
@@ -20,7 +21,7 @@ def get_temp(city_name, n_day):
         api_url,
         params={'city': str(city_name), 'forecast': n_day}
     ).json()
-    city_temp = str(round(city_param['temp']))+' grad'
+    city_temp = str(round(city_param['temp'])) + ' grad'
     return city_temp
 
 
@@ -43,6 +44,7 @@ def start_handler(message):
 
 
 def weather_handler(message):
+    cities[message.from_user.id] = message.text
     markup = ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
     markup.add(*buttons)
     bot.send_message(message.from_user.id, 'Choose the day?', reply_markup=markup)
@@ -50,22 +52,26 @@ def weather_handler(message):
 
 
 def weather_date_handler(message):
+    user_id = message.from_user.id
+    city = cities.get(user_id, MAIN_STATE)
     req_date = message.text
     current_day = date.today().day
-    if req_date == 'today':
+    if req_date == 'TODAY':
         req_day = current_day
-    elif req_date == 'tomorrow':
+    elif req_date == 'TOMORROW':
         req_day = current_day + 1
-    elif req_date == 'day after tomorrow':
+    elif req_date == 'DAY AFTER TOMORROW':
         req_day = current_day + 2
-    elif req_date == '2 days after tomorrow':
+    elif req_date == '2 DAYS AFTER TOMORROW':
         req_day = current_day + 3
-    elif req_date == 'check for another city':
+    elif req_date == 'check for another city (type: /start)':
         states[message.from_user.id] = MAIN_STATE
-    if req_date != 'check for another city':
+    if req_date != 'check for another city (type: /start)':
         for i in range(4):
             if (req_day - current_day) == i:
                 n_day = i
         city_temp = get_temp(city, n_day)
         bot.reply_to(message, city_temp)
+
+
 bot.polling()
