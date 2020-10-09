@@ -1,7 +1,6 @@
 import telebot
 from telebot.types import ReplyKeyboardMarkup
 import os
-
 import requests
 from datetime import date
 
@@ -10,7 +9,7 @@ bot = telebot.TeleBot(token)
 api_url = 'https://stepik.akentev.com/api/weather'
 states = {}
 cities = {}
-req_dates = {}
+req_day = 'TODAY'
 buttons = ['TODAY', 'TOMORROW', 'DAY AFTER TOMORROW', '2 DAYS AFTER TOMORROW', 'check for another city (type: /start)']
 MAIN_STATE = 'main'
 NEXT_STATE = 'next_state'
@@ -53,11 +52,10 @@ def weather_handler(message):
 
 
 def weather_date_handler(message):
+    req_date = message.text
     user_id = message.from_user.id
-    req_dates[message.from_user.id] = message.text
-    city = cities.get(user_id, MAIN_STATE)
+    city = cities.get(user_id, None)
     current_day = date.today().day
-    req_date = req_dates[message.from_user.id]
     if req_date == 'TODAY':
         req_day = current_day
     elif req_date == 'TOMORROW':
