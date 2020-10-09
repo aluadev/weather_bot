@@ -39,7 +39,7 @@ def dispatcher(message):
 
 def start_handler(message):
     if message.text == '/start':
-        bot.reply_to(message, "This is weather-bot. I will help you to know about the weather in any city. Which city you are interested in?")
+        bot.reply_to(message, "This is weather-bot. I will help you to know about the weather in any city. The weather of which city you are interested in?")
         states[message.from_user.id] = NEXT_STATE
 
 
