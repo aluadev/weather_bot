@@ -10,7 +10,7 @@ bot = telebot.TeleBot(token)
 api_url = 'https://stepik.akentev.com/api/weather'
 states = {}
 cities = {}
-req_day = None
+req_dates = {}
 buttons = ['TODAY', 'TOMORROW', 'DAY AFTER TOMORROW', '2 DAYS AFTER TOMORROW', 'check for another city (type: /start)']
 MAIN_STATE = 'main'
 NEXT_STATE = 'next_state'
@@ -54,9 +54,10 @@ def weather_handler(message):
 
 def weather_date_handler(message):
     user_id = message.from_user.id
+    req_dates[message.from_user.id] = message.text
     city = cities.get(user_id, MAIN_STATE)
-    req_date = message.text
     current_day = date.today().day
+    req_date = req_dates[message.from_user.id]
     if req_date == 'TODAY':
         req_day = current_day
     elif req_date == 'TOMORROW':
